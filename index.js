@@ -65,18 +65,20 @@ function MqttSwitchTasmotaAccessory(log, config) {
 	this.model = config['model'] || "Sonoff";
 	this.serialNumberMAC = config['serialNumberMAC'] || "";
 
-	this.outlet = (config["switchType"] !== undefined) ? ((config["switchType"] == "outlet") ? true : false) : false;
+  this.outlet = (config["switchType"] !== undefined) ? ((config["switchType"] == "outlet") ? true : false) : false;
 
 	this.switchStatus = false;
 
-	if (this.outlet) {
+	if (this.outlet === "outlet") {
 		this.service = new Service.Outlet(this.name);
 		this.service
 			.getCharacteristic(Characteristic.OutletInUse)
 			.on('get', this.getOutletUse.bind(this));
-	} else {
+	} elseif(this.outlet === "switch") {
 		this.service = new Service.Switch(this.name);
-	}
+  } elseif(this.outlet === "lightbulb") {
+    this.service = new Service.Lightbulb(this.name);
+  }
 
 	this.service
 		.getCharacteristic(Characteristic.On)
